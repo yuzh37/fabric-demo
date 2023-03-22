@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <script src="./fabric.js"></script>
+        <script src="./fabric.boundaries.js"></script>
+        <script src="./fabric.overlay.js"></script>
+        <script src="./fabric.tbimage.js"></script>
+        <style>
+            .drawer-container {
+                width: 500px;
+                height: 500px;
+                border: 1px solid #bdbdbd;
+                border-radius: 10px;
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="drawer-container">
+            <canvas id="main_canvas"></canvas>
+        </div>
+        <div class="buttons">
+            <button id="btn_add_image" onclick="onAddImage()">Add Image</button>
+            <button id="btn_eraser" onclick="OnErase()">Erase</button>
+        </div>
+    </body>
+    <script>
+        var mainCanvas = new fabric.Canvas("main_canvas");
+        mainCanvas.setDimensions({
+            width: 500,
+            height: 500,
+            stopContextMenu: !0,
+            svgViewportTransformation: !0,
+            enableRetinaScaling: !0,
+            controlsAboveOverlay: !0,
+            preserveObjectStacking: !0,
+            uniScaleKey: null,
+            altActionKey: null
+        });
+
+        mainCanvas.on('object:scaling', function (e) {
+        });
+        mainCanvas.on("object:moving", (function(t) {
+        }));
+
+        function onAddImage(){
+            fabric.Image.fromURL("./test.jpg", function (oImg) {
+                addFigureObject(oImg);
+            });
+        }
+        function OnErase(){
+            mainCanvas.freeDrawingBrush = new fabric.EraserBrush(mainCanvas);
+            mainCanvas.isDrawingMode = true;
+            //fabric.PencilBrush.prototype.globalCompositeOperation = "destination-out";
+            mainCanvas.renderAll();
+        }
+        function addFigureObject(figure, notCenter) {
+            figure.set({
+                lockMovement: false
+            });
+
+            mainCanvas.add(figure);
+            mainCanvas.setActiveObject(figure);
+            if (!notCenter) {
+                figure.center();
+                figure.top -= 50;
+                figure.animate('top', figure.top + 50, {
+                    duration: 500,
+                    onChange: mainCanvas.renderAll.bind(mainCanvas),
+                    onComplete: function () {
+                        figure.setCoords();
+                    },
+                    easing: fabric.util.ease['easeOutCirc']
+                });
+            } 
+            mainCanvas.renderAll();
+        }
+    </script>
+</html>

@@ -1,0 +1,365 @@
+<html>
+    <head>
+        <script>
+            var Bje = function(e) {
+            var t, n = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [], i = (0,
+            rr.Z)(n);
+            try {
+                for (i.s(); !(t = i.n()).done; ) {
+                    var r, o = t.value, a = Object.getOwnPropertyNames(o), s = (0,
+                    rr.Z)(a);
+                    try {
+                        for (s.s(); !(r = s.n()).done; ) {
+                            var l = r.value;
+                            e.hasOwnProperty(l) || Object.assign(e, (0,
+                            ze.Z)({}, l, o[l]))
+                        }
+                    } catch (cRt) {
+                        s.e(cRt)
+                    } finally {
+                        s.f()
+                    }
+                }
+            } catch (cRt) {
+                i.e(cRt)
+            } finally {
+                i.f()
+            }
+        }
+        , zje = {
+            instantInitialized: !1,
+            watchInitialization: function(e) {
+                var t = this;
+                if (!0 === this.instantInitialized)
+                    return e(this);
+                this.on("element:initialized", (function() {
+                    return e(t)
+                }
+                ))
+            }
+        }
+          , Uje = {
+            watchInitialization: function(e) {
+                return e(this)
+            }
+        }
+          , qje = {
+            updateLeft: function(e) {
+                var t = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
+                if (this.hasOwnProperty("boundaryLimitObject"))
+                    this.boundaryLimitObject.set("left", Math.round(e)),
+                    this.boundaryLimitObject.setCoords();
+                else {
+                    if (!0 === this.lockMovementX)
+                        return;
+                    this.set("left", Math.round(e)),
+                    this.setCoords()
+                }
+                this.fire("element:properties_modified", {
+                    stopPropagation: !t
+                }),
+                this.canvas.renderAll()
+            },
+            updateTop: function(e) {
+                var t = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1];
+                if (this.hasOwnProperty("boundaryLimitObject"))
+                    this.boundaryLimitObject.set("top", Math.round(e)),
+                    this.boundaryLimitObject.setCoords();
+                else {
+                    if (!0 === this.lockMovementY)
+                        return;
+                    this.set("top", Math.round(e)),
+                    this.setCoords()
+                }
+                this.fire("element:properties_modified", {
+                    stopPropagation: !t
+                }),
+                this.canvas.renderAll()
+            },
+            moveToPosition: function(e) {
+                if (this.canvas) {
+                    var t = this.canvas.clipPath.width
+                      , n = this.canvas.clipPath.height
+                      , i = this;
+                    if (this.hasOwnProperty("boundaryLimitObject") && (i = this.boundaryLimitObject),
+                    "left" === e) {
+                        var r = i.getPositionByOrigin(e, {
+                            x: 0,
+                            y: i.top
+                        });
+                        this.updateLeft(r.x, !1)
+                    } else if ("top" === e) {
+                        var o = i.getPositionByOrigin(e, {
+                            x: i.left,
+                            y: 0
+                        });
+                        this.updateTop(o.y, !1)
+                    } else if ("center" === e) {
+                        var a = i.getPositionByOrigin(e, {
+                            x: Math.round(t / 2),
+                            y: i.top
+                        });
+                        this.updateLeft(a.x, !1)
+                    } else if ("right" === e) {
+                        var s = i.getPositionByOrigin(e, {
+                            x: t,
+                            y: i.top
+                        });
+                        this.updateLeft(s.x, !1)
+                    } else if ("middle" === e) {
+                        var l = i.getPositionByOrigin(e, {
+                            x: i.left,
+                            y: Math.round(n / 2)
+                        });
+                        this.updateTop(l.y, !1)
+                    } else if ("bottom" === e) {
+                        var c = i.getPositionByOrigin(e, {
+                            x: i.left,
+                            y: n
+                        });
+                        this.updateTop(c.y, !1)
+                    }
+                    this.fire("element:properties_modified"),
+                    this.canvas.renderAll()
+                }
+            }
+        }
+          , Hje = {
+            updateWidth: function(e) {
+                this.hasOwnProperty("boundaryLimitObject") ? this.boundaryLimitObject.set({
+                    scaleX: 1,
+                    width: Math.round(e)
+                }) : this.set("scaleX", e / this.width),
+                this.fire("element:properties_modified"),
+                this.canvas.renderAll()
+            },
+            updateHeight: function(e) {
+                this.hasOwnProperty("boundaryLimitObject") ? this.boundaryLimitObject.set({
+                    scaleY: 1,
+                    height: Math.round(e)
+                }) : this.set("scaleY", e / this.height),
+                this.fire("element:properties_modified"),
+                this.canvas.renderAll()
+            },
+            updateLength: function(e, t) {
+                this.hasOwnProperty("boundaryLimitObject") ? this.boundaryLimitObject.set({
+                    scaleY: 1,
+                    height: Math.round(t)
+                }) : this.set("scaleY", t / this.height),
+                this.hasOwnProperty("boundaryLimitObject") ? this.boundaryLimitObject.set({
+                    scaleX: 1,
+                    width: Math.round(e)
+                }) : this.set("scaleX", e / this.width),
+                this.fire("element:properties_modified"),
+                this.canvas.renderAll()
+            }
+        }
+          , Wje = {
+            makeVisible: function() {
+                var e = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
+                !1 !== this.hidden && (e && this.changeVisibility(!0),
+                this.hidden = !1,
+                this.fire("element:properties_modified"),
+                this.canvas.fire("element:visible", {
+                    id: this.id,
+                    visible: !0
+                }),
+                this.canvas.renderAll())
+            },
+            makeInvisible: function() {
+                !0 !== this.hidden && (this.changeVisibility(!1),
+                this.hidden = !0,
+                this.fire("element:properties_modified"),
+                this.canvas.fire("element:visible", {
+                    id: this.id,
+                    visible: !1
+                }),
+                this.canvas.discardActiveObject(),
+                this.canvas.renderAll())
+            },
+            toggleVisibility: function() {
+                var e = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
+                return !1 === this.hidden ? (this.makeInvisible(),
+                !1) : (this.makeVisible(e),
+                !0)
+            },
+            changeVisibility: function() {
+                var e, t = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0], n = (0,
+                rr.Z)(this.getElementAddedToCanvas());
+                try {
+                    for (n.s(); !(e = n.n()).done; ) {
+                        var i = e.value;
+                        i.set("visible", t)
+                    }
+                } catch (cRt) {
+                    n.e(cRt)
+                } finally {
+                    n.f()
+                }
+            },
+            changeVisibilityIfPossible: function() {
+                var e = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
+                e && this.hidden || (this.changeVisibility(e),
+                this.canvas.renderAll())
+            }
+        }
+          , Gje = {
+            getAttribute: function(e) {
+                var t = this;
+                return ["left", "top"].includes(e) && this.boundaryLimitObject && (t = this.boundaryLimitObject),
+                void 0 === t[e] ? 0 : t[e]
+            },
+            setAttribute: function(e, t) {
+                if (this.boundaryLimitObject && ["left", "top"].includes(e))
+                    return this.boundaryLimitObject.set(e, t),
+                    this.boundaryLimitObject.setCoords(),
+                    void this.boundaryLimitObject.fire("moving", {
+                        recomputeCoords: !0
+                    });
+                if ("opacity" !== e)
+                    this.set(e, t),
+                    this.setCoords();
+                else {
+                    var n, i = (0,
+                    rr.Z)(this.getElementAddedToCanvas());
+                    try {
+                        for (i.s(); !(n = i.n()).done; ) {
+                            n.value.set(e, t)
+                        }
+                    } catch (cRt) {
+                        i.e(cRt)
+                    } finally {
+                        i.f()
+                    }
+                }
+            }
+        }
+          , Vje = {
+            toggleLock: function() {
+                var e = this.locked;
+                return this.locked = !e,
+                this.hasOwnProperty("boundaryLimitObject") ? (this.boundaryLimitObject.selectable = e,
+                this.boundaryLimitObject.hasControls = e,
+                this.boundaryLimitObject.hasBorders = e,
+                this.boundaryLimitObject.evented = e,
+                "tb-button" === this.type && (this.text.editable = e,
+                this.text.evented = e),
+                "tb-text" === this.type && (this.editable = e,
+                this.evented = e)) : (this.selectable = e,
+                this.hasControls = e,
+                this.hasBorders = e,
+                this.evented = e),
+                this.fire("element:properties_modified"),
+                this.canvas.fire("element:locked", {
+                    id: this.id,
+                    locked: this.locked
+                }),
+                this.canvas.renderAll(),
+                !0
+            }
+        }
+          , Yje = {
+            cleanBeforeDeletion: function() {
+                throw new Error("Method not implemented.")
+            }
+        }
+          , Xje = {
+            reinitialize: function() {
+                throw new Error("Method not implemented.")
+            }
+        };
+
+            function func1(e, t) {
+                var n = Object.keys(e);
+                if (Object.getOwnPropertySymbols) {
+                    var i = Object.getOwnPropertySymbols(e);
+                    t && (i = i.filter((function(t) {
+                        return Object.getOwnPropertyDescriptor(e, t).enumerable
+                    }
+                    ))),
+                    n.push.apply(n, i)
+                }
+                return n
+            }
+            function iZ(e, t, n) {
+                return t in e ? Object.defineProperty(e, t, {
+                    value: n,
+                    enumerable: !0,
+                    configurable: !0,
+                    writable: !0
+                }) : e[t] = n,
+                e
+            }
+            function QIZ(e){
+                for (var t = 1; t < arguments.length; t++) {
+                    var n = null != arguments[t] ? arguments[t] : {};
+                    t % 2 ? func1(Object(n), !0).forEach((function(t) {
+                        (0, iZ)(e, t, n[t])}
+                    )) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n)) : r(Object(n)).forEach((function(t) {
+                        Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t))
+                    }
+                    ))
+                }
+                return e
+            };
+        </script>
+        <script src="./fabric.js"></script>
+        <script src="./fabric.boundaries.js"></script>
+        <script src="./fabric.overlay.js"></script>
+        <script src="./fabric.tbimage.js"></script>
+    </head>
+    <body>
+        <canvas id="main_canvas"></canvas>
+    </body>
+    <script>
+        var mainCanvas = new fabric.Canvas("main_canvas");
+        mainCanvas.setDimensions({
+            width: window.innerWidth,
+            height: window.outerHeight,
+            stopContextMenu: !0,
+            svgViewportTransformation: !0,
+            enableRetinaScaling: !0,
+            //selection: !("allowMultiSelection"in f) || f.allowMultiSelection,
+            controlsAboveOverlay: !0,
+            preserveObjectStacking: !0,
+            uniScaleKey: null,
+            altActionKey: null
+        });
+
+        mainCanvas.on('object:scaling', function (e) {
+            var obj = e.target;
+            var ratio = obj.width / obj.height;
+            console.log("scaleX:", obj.scaleX * obj.width);
+            console.log("scaleY:", obj.scaleY);
+        });
+        mainCanvas.on("object:moving", (function(t) {
+            if (!mainCanvas.isDragging) {
+            }
+        }));
+
+        var r = new fabric.Boundaries("custom_image_container",{
+            left: 300,
+            top: 300,
+            width: 600,
+            height: 600
+        },!0);
+
+        var s = new fabric.TbImage(r);
+        s.watchInitialization((function() {
+            //t._addElement(r, i),
+            var elements = s.getElementAddedToCanvas();
+            for (var elt of elements){
+                mainCanvas.add(elt);
+            }
+            
+            s.selected = !0;
+            mainCanvas.setActiveObject(s.boundaryLimitObject),
+            mainCanvas.renderAll();
+
+            mainCanvas.fire("object:element_added", {
+                target: s
+            })
+        }));
+
+    </script>
+</html>
