@@ -12,15 +12,24 @@
                 border-radius: 10px;
                 margin-bottom: 10px;
             }
+            #descriptions {
+                margin-bottom: 10px;
+                color: crimson;
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
         <div class="drawer-container">
             <canvas id="main_canvas"></canvas>
         </div>
+        <div id="descriptions">
+            This is editor mode...
+        </div>
         <div class="buttons">
             <button id="btn_add_image" onclick="onAddImage()">Add Image</button>
             <button id="btn_eraser" onclick="OnErase()">Erase</button>
+            <button id="switch_drawing_mode" onclick="OnChangeDrawingMode()">To Editor Mode</button>
         </div>
     </body>
     <script>
@@ -36,22 +45,35 @@
             uniScaleKey: null,
             altActionKey: null
         });
-
         mainCanvas.on('object:scaling', function (e) {
         });
         mainCanvas.on("object:moving", (function(t) {
         }));
-
+        var editorModeString = "This is editor mode...";
+        var eraserModeString = "This is eraser mode...";
+        var descElt = document.getElementById("descriptions");
         function onAddImage(){
+            mainCanvas.isDrawingMode = false;
             fabric.Image.fromURL("./test.jpg", function (oImg) {
                 addFigureObject(oImg);
             });
+            updateDescription(false);
         }
         function OnErase(){
             mainCanvas.freeDrawingBrush = new fabric.EraserBrush(mainCanvas);
+            mainCanvas.freeDrawingBrush.width = 20;
             mainCanvas.isDrawingMode = true;
-            //fabric.PencilBrush.prototype.globalCompositeOperation = "destination-out";
-            mainCanvas.renderAll();
+            updateDescription(true);
+        }
+        function OnChangeDrawingMode(){
+            mainCanvas.isDrawingMode = false;
+            descElt.innerHTML = editorModeString;
+        }
+        function updateDescription(isEraseMode){
+            if (isEraseMode)
+                descElt.innerHTML = eraserModeString;
+            else
+                descElt.innerHTML = editorModeString;
         }
         function addFigureObject(figure, notCenter) {
             figure.set({
